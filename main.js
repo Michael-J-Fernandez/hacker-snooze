@@ -24,13 +24,14 @@ let generateStoryRow = function (storyData){
 
     tr.innerHTML = `<tr class="story-row">
                         <td class="story-btns" style="width: 1%; white-space: nowrap;">
-                            <div class="btn-group btn-group-sm" role="group">
+                            <div class="btn-group btn-group-sm d-flex aligns-items-center justify-content-center" role="group">
                                 <button type="button" class="btn btn-outline-secondary"><i class="bi bi-heart text-danger"></i> ${storyData['score']}</button>
-                                <button type="button" class="btn btn-outline-secondary"><i class="bi bi-chat-right-text"></i> ${storyData['kids'].length}</button>
+                                <button type="button" class="btn btn-outline-secondary"><i class="bi bi-chat-right-text"></i> ${storyData['descendants']}</button>
                             </div>    
-                        </td>    
+                        </td>
+                        <td class="story-by" style="width: 1%; white-space: nowrap;">By:  ${storyData['by']}</td>
                         <td class="story-title">
-                            <a href="${storyData['url']}">${storyData['title']}</a>
+                            <a href="${storyData['url']}" target="_blank">${storyData['title']}</a>
                         </td>
                     </tr>`;
 
@@ -38,7 +39,7 @@ let generateStoryRow = function (storyData){
 }                    
 
 
-contentTable.appendChild(generateStoryRow(testStory))
+// contentTable.appendChild(generateStoryRow(testStory));
 /*
 Your website loads at least the 100 current top stories on Hacker News and displays their titles on the page
 
@@ -60,29 +61,29 @@ https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty
 // Array with top 100 story IDs
 let topStories = [];
 
-// // gets array with top 100 story IDs
-// let getTopStories = async () => {
+// gets array with top 100 story IDs
+let getTopStories = async () => {
 
-//     let response = await fetch('https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty');
-//     let data = await response.json();
+    let response = await fetch('https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty');
+    let data = await response.json();
 
-//     for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 100; i++) {
 
-//         // console.log(data[i]);
+        // console.log(data[i]);
 
-//         let storyResponse = await fetch(`https://hacker-news.firebaseio.com/v0/item/${data[i]}.json?print=pretty`);
+        let storyResponse = await fetch(`https://hacker-news.firebaseio.com/v0/item/${data[i]}.json?print=pretty`);
 
-//         let storyData = await storyResponse.json();
+        let storyData = await storyResponse.json();
 
-//         console.log(storyData)
+        console.log(storyData)
 
+        contentTable.appendChild(generateStoryRow(storyData));
+    }
+    // console.log(topStories);
+    // return topStories;
+}
 
-//     }
-//     // console.log(topStories);
-//     // return topStories;
-// }
-
-// getTopStories();
+getTopStories();
 
 
 
