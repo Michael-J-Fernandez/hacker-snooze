@@ -1,23 +1,10 @@
-let testStory = {
-    "by": "mooreds",
-    "descendants": 3,
-    "id": 33644637,
-    "kids": [
-        33645849,
-        33645668,
-        33645095
-    ],
-    "score": 7,
-    "time": 1668714801,
-    "title": "Punctuation and Other Ways Negotiators Have Resolved Climate Change Issues",
-    "type": "story",
-    "url": "https://repository.law.umich.edu/mjeal/vol6/iss1/2/"
-}
-
 // querySelect DOM elements
-
+let navTop100 = document.querySelector('#nav_top-100');
+let navAsk = document.querySelector('#nav_ask');
 let contentTable = document.querySelector('#content-table');
 
+
+// creates table row out of each top story
 let generateStoryRow = function (storyData){
     let tr = document.createElement('tr');
     tr.class = "story-row";
@@ -31,7 +18,7 @@ let generateStoryRow = function (storyData){
                         </td>
                         <td class="story-by" style="width: 1%; white-space: nowrap;">By:  ${storyData['by']}</td>
                         <td class="story-title">
-                            <a href="${storyData['url']}" target="_blank">${storyData['title']}</a>
+                            <a class="ask-title" href="${storyData['url']}" target="_blank">${storyData['title']}</a>
                         </td>
                     </tr>`;
 
@@ -39,23 +26,26 @@ let generateStoryRow = function (storyData){
 }                    
 
 
-// contentTable.appendChild(generateStoryRow(testStory));
-/*
-Your website loads at least the 100 current top stories on Hacker News and displays their titles on the page
+// generates table row out of each top ask
+let generateAskRow = function (storyData){
+    let tr = document.createElement('tr');
+    tr.class = "story-row";
 
-returns array with 500 id's top recent stories
-get i = 99;
-https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty
+    tr.innerHTML = `<tr class="story-row">
+                        <td class="story-btns" style="width: 1%; white-space: nowrap;">
+                            <div class="btn-group btn-group-sm d-flex aligns-items-center justify-content-center" role="group">
+                                <button type="button" class="btn btn-outline-secondary"><i class="bi bi-heart text-danger"></i> ${storyData['score']}</button>
+                                <button type="button" class="btn btn-outline-secondary"><i class="bi bi-chat-right-text"></i> ${storyData['descendants']}</button>
+                            </div>    
+                        </td>
+                        <td class="story-by" style="width: 1%; white-space: nowrap;">By:  ${storyData['by']}</td>
+                        <td class="story-title">
+                            <a href="https://hacker-news.firebaseio.com/v0/item/${storyData['id']}/text.json?print=pretty" target="_blank">${storyData['title']}</a>
+                        </td>
+                    </tr>`;
+    return tr;
+}                    
 
-- loop through array and feed each storyID to function
-
-- function will take each ID and make a section out of it
-- Section Components:
-- Title: link to story page
-- Score: button (heart?)
-- Comments: number, link, displays comments when pressed
-
-*/
 
 
 // Array with top 100 story IDs
@@ -68,95 +58,53 @@ let getTopStories = async () => {
     let data = await response.json();
 
     for (let i = 0; i < 100; i++) {
-
-        // console.log(data[i]);
-
         let storyResponse = await fetch(`https://hacker-news.firebaseio.com/v0/item/${data[i]}.json?print=pretty`);
 
         let storyData = await storyResponse.json();
 
-        console.log(storyData)
-
         contentTable.appendChild(generateStoryRow(storyData));
     }
-    // console.log(topStories);
-    // return topStories;
 }
 
-getTopStories();
+
+let getTopAsk = async () => {
+
+    let response = await fetch('https://hacker-news.firebaseio.com/v0/askstories.json?print=pretty');
+    let data = await response.json();
+
+    for (let i = 0; i < 100; i++) {
+        let storyResponse = await fetch(`https://hacker-news.firebaseio.com/v0/item/${data[i]}.json?print=pretty`);
+
+        let storyData = await storyResponse.json();
+
+        contentTable.appendChild(generateAskRow(storyData));
+    }
+}
 
 
+// loads top 100 upon first loading the main page
+document.onload = getTopStories;
 
 
+// makes top 100 nav tab active
+navTop100.addEventListener('click', ()=>{
+    navTop100.classList.add('active');
+    navAsk.classList.remove('active');
 
-/* ------------------------------------------------------------------------------------------------
-Each story's title should be a link to the story's URL
+});
 
-fetch the story object:
-`https://hacker-news.firebaseio.com/v0/item/${storyID}.json?print=pretty`
+// makes ask nav tab active - beta
+navAsk.addEventListener('click', ()=>{
+    navTop100.classList.remove('active');
+    navAsk.classList.add('active');
 
-storyObj['title'] = title
-
-*/
-
-
-
-/* ------------------------------------------------------------------------------------------------
-Adjacent to the story's title, the story's score, number of comments, and author's username should be visible
-
-*/
+});
 
 
+// loads content based on active nav tab
+if (navTop100.classList.contains('active')){
+    getTopStories();
 
-
-/* ------------------------------------------------------------------------------------------------
-Your site should look at least a little nicer than the real Hacker News (Bootstrap!)
-
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// let generateStoryItem = function (){
-//     let tr = document.createElement('tr');
-//     tr.class = "story-row";
-
-//         let btnTd = document.createElement('td');
-//         btnTd.style.cssText = "width: 1%; white-space: nowrap;";
-
-//             let div = document.createElement('div');
-//             div.classList.add("btn-group btn-group-sm");
-//             div.setAttribute('role', 'group');
-
-//                 // x2
-//                 let btnL = document.createElement('button');
-//                 btnL.type = "button";
-//                 btnL.classLis.add('btn btn-outline-secondary');
-
-//                     let iHeart = document.createElement('i');
-//                     iHeart.classList.add('bi bi-heart text-danger');
-//                     // get RANK str and add next to
-
-//                 let btnR = document.createElement('button');
-//                 btnR.type = "button";
-//                 btnR.classLis.add('btn btn-outline-secondary');
-
-//                     let iChat = document.createElement('i');
-//                     iChat.classList.add('bi bi-chat-right-text');
-//                     // get KIDS.length str and add next to
-
-//         let storyTd = document.createElement('td');
-//         story
-
-
-// }
+} else if (navAsk.classList.contains('active')){
+    getTopAsk();
+}
